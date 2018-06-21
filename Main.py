@@ -7,7 +7,43 @@ Created on Sat Jun 16 22:50:45 2018
 from nltk.corpus import wordnet as wn
 from WordNetAccess import  get_number_of_syns, get_min_hypernym_path
 from TofelPOSTagging import tag_part_of_speech
+from TrueCase import correctCase
 import ast
+import sys
+import os
+import numpy as np
+
+#non_native_directory_path = sys.argv[1]
+non_native_directory_path = 'C:\\Users\\TAL-LAPTOP\\Desktop\\NLP Lab\\reddit.nonNative\\'
+#native_directory_path = sys.argv[2]
+native_directory_path = 'C:\\Users\\TAL-LAPTOP\\Desktop\\NLP Lab\\reddit.Native\\'
+#trigrams_file = sys.argv[3]
+trigrams_file = 'C:\\Users\\TAL-LAPTOP\\Desktop\\NLP Lab\\w3.txt'
+#nonNativeOutputFileName = sys.argv[4]
+nonNativeOutputFileName ='C:\\Users\\TAL-LAPTOP\\Desktop\\NLP Lab\\nonNativeTrueCase.txt'
+#nativeOutputFileName = sys.argv[5]
+nativeOutputFileName ='C:\\Users\\TAL-LAPTOP\\Desktop\\NLP Lab\\NativeTrueCase.txt'
+#trueCase = sys.argv[6]
+trueCase = True
+
+
+
+
+# TrueCase (if needed)
+if trueCase:
+    correctCase(trigrams_file, native_directory_path, non_native_directory_path, nonNativeOutputFileName, nativeOutputFileName)
+
+# Part of Speech Tagging
+# Convet to WordNet Tagging ?
+# Word Sense disambiguation
+# Querty WordNet
+# Need to consider frequent word issue (noise - tend to have many senses):
+# Staistial Analysis
+
+
+
+
+
 #print (wn.ADJ)
 #print (wn.VERB)
 #print (wn.NOUN)
@@ -23,25 +59,25 @@ wordnet_results_path='C:\\Users\\TAL-LAPTOP\\Desktop\\NLP Lab\\nli-shared-task-2
 #for pair in sentence:
 #    print(len(pair))
 #    new_line.append([pair[0], get_wordnet_pos(pair[1])])
-#print(sentence)
-#print(new_line)
-open(wordnet_results_path, 'w+').close()
-#tag_part_of_speech(orig_path, pos_path)
-with open(wordnet_results_path, 'a') as wr:
-    with open(pos_path, 'r') as tagged:
-        data = tuple(ast.literal_eval(line) for line in tagged)
-        for tagged_line in tagged:
-             new_line = tagged_line.split(',')
-    #         print(new_line)
-        for tupple in data:
-    #        print(tupple)
-            if len(tupple) < 3 :
-                continue              
-            print(get_number_of_syns(tupple))
-            print(get_min_hypernym_path(tupple))
-            wr.write(str(tupple[0]) + ',' + str(tupple[1]) + ',' + str(tupple[2]) + ',' + str(get_number_of_syns(tupple)) + ',' + str(get_min_hypernym_path(tupple)))
-            wr.write('\n')
-    wr.close()
-            
+##print(sentence)
+##print(new_line)
+#open(wordnet_results_path, 'w+').close()
+##tag_part_of_speech(orig_path, pos_path)
+#with open(wordnet_results_path, 'a') as wr:
+#    with open(pos_path, 'r') as tagged:
+#        data = tuple(ast.literal_eval(line) for line in tagged)
+#        for tagged_line in tagged:
+#             new_line = tagged_line.split(',')
+#    #         print(new_line)
+#        for tupple in data:
+#    #        print(tupple)
+#            if len(tupple) < 3 :
+#                continue              
+#            print(get_number_of_syns(tupple))
+#            print(get_min_hypernym_path(tupple))
+#            wr.write(str(tupple[0]) + ',' + str(tupple[1]) + ',' + str(tupple[2]) + ',' + str(get_number_of_syns(tupple)) + ',' + str(get_min_hypernym_path(tupple)))
+#            wr.write('\n')
+#    wr.close()
+#            
         
 
