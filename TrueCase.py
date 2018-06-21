@@ -28,20 +28,22 @@ def correctCase(trigrams_file, native_directory_path, non_native_directory_path,
         nonNativeFile = open(non_native_directory_path + "\\" + file,"r", encoding = "utf8",  errors="ignore")
         print("Running file " + str(file))
         counter = counter + 1
-        nonNativeSentenceArray = createSentencesArray(nonNativeFile)
+        nonNativeSentenceArray += (createSentencesArray(nonNativeFile))
         nonNativeFile.close()
         
     counter = 1
     for sentence in nonNativeSentenceArray:
-        #print(counter)
+        if counter%100 == 0:
+            print(counter)
         sentence = removeBrackets(sentence)
         sentence = handleTitle(sentence)
         sentence = handleUpperLowerCase(sentence, trigramDictionary)
         counter = counter + 1
         nonNativeNewSentenceArray.append(sentence)
-        
+    print("Number of sentences" + str(len(nonNativeNewSentenceArray)))
+    print ("Writing to file")  
     for sentence in nonNativeNewSentenceArray:
-        nonNativeOutputFile.write(sentence + "\n")     
+            nonNativeOutputFile.write(sentence + "\n")     
     nonNativeOutputFile.close()
     
   
@@ -146,9 +148,9 @@ def handleUpperLowerCase(sentence, trigramDictionary):
         trigramLower = sentenceSplitWordArray[index] + " " + sentenceSplitWordArray[index + 1].lower() + " " + sentenceSplitWordArray[index + 2]
         trigramUpper = sentenceSplitWordArray[index] + " " + sentenceSplitWordArray[index + 1].upper() + " " + sentenceSplitWordArray[index + 2]
         trigramTitle = sentenceSplitWordArray[index] + " " + sentenceSplitWordArray[index + 1].title() + " " + sentenceSplitWordArray[index + 2]
-        print (trigramLower)
-        print (trigramUpper)
-        print (trigramTitle)
+#        print (trigramLower)
+#        print (trigramUpper)
+#        print (trigramTitle)
         if trigramLower in trigramDictionary.keys():
             counter= trigramDictionary[trigramLower]    
             trueCase=middleWord.lower()
@@ -164,7 +166,7 @@ def handleUpperLowerCase(sentence, trigramDictionary):
            found=True
            
         if found:
-            print("TrueCase = " + trueCase + "counter = " + str(counter))
+#            print("TrueCase = " + trueCase + "counter = " + str(counter))
             sentenceSplitWordArray[index+1] = trueCase
 #        else: # could not find trigram - fall back to unigram        
 #     
