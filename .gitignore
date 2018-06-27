@@ -102,3 +102,8 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+wordFreq.txt
+w22.txt
+w1.txt
+w3.txt
+w21.txt
