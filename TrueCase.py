@@ -2,86 +2,56 @@ import sys
 import os
 import numpy as np
 
-#non_native_directory_path = sys.argv[1]
-#native_directory_path = sys.argv[2]
-#two_grams_file = sys.argv[3]
-#three_grams_file = sys.argv[4]
-#nonNativeOutputFileName = sys.argv[5]
-#nativeOutputFileName = sys.argv[6]
 
-def correctCase(trigrams_file, native_directory_path, non_native_directory_path, nonNativeOutputFileName, nativeOutputFileName):
+def correctCase(trigrams_file, unigrams_file, native_directory_path, non_native_directory_path, nonNativeOutputFileName, nativeOutputFileName):
     trigramsDB = open(trigrams_file,"r")
+    unigramsDB = open(unigrams_file,"r")
     trigramDictionary = createTrigramDictionary(trigramsDB)
+    unigramDictionary = createUnigramDictionary(unigramsDB)
     nonNativeOutputFile = open(nonNativeOutputFileName,"w", encoding="utf-8")
     nativeOutputFile = open(nativeOutputFileName,"w", encoding="utf-8")
     nonNativeSentenceArray = []
     nonNativeNewSentenceArray = []
     nativeSentenceArray = []
     nativeNewSentenceArray = []
-   
-    
-    counter = 0
+       
     nativeFileList = os.listdir(native_directory_path)
     nonNativeFileList = os.listdir(non_native_directory_path)
+    
     # NON NATIVE
     for file in nonNativeFileList:       
         nonNativeFile = open(non_native_directory_path + "\\" + file,"r", encoding = "utf8",  errors="ignore")
         print("Running file " + str(file))
-        counter = counter + 1
         nonNativeSentenceArray += (createSentencesArray(nonNativeFile))
         nonNativeFile.close()
-        
-    counter = 1
+
     for sentence in nonNativeSentenceArray:
-        if counter%100 == 0:
-            print(counter)
         sentence = removeBrackets(sentence)
         sentence = handleTitle(sentence)
-        sentence = handleUpperLowerCase(sentence, trigramDictionary)
-        counter = counter + 1
+        sentence = handleUpperLowerCase(sentence, trigramDictionary, unigramDictionary)
         nonNativeNewSentenceArray.append(sentence)
-    print("Number of sentences" + str(len(nonNativeNewSentenceArray)))
-    print ("Writing to file")  
     for sentence in nonNativeNewSentenceArray:
             nonNativeOutputFile.write(sentence + "\n")     
     nonNativeOutputFile.close()
     
-  
-
+    # NATIVE
+    for file in nativeFileList:       
+        nativeFile = open(native_directory_path + "\\" + file, "r", encoding = "utf8",  errors = "ignore")
+        print("Running file " + str(file))
+        nativeSentenceArray += (createSentencesArray(nativeFile))
+        nativeFile.close()
         
-    # NATIVE:
-    #for file in nativeFileList:
-    #    nativeFile = open(native_directory_path + "\\" + file,"r", encoding = "utf8")
-    #    for line in nativeFile:
-    #        nativeSentenceArray.append(line)
-    #    np.random.shuffle(nativeSentenceArray)
-    #    arrayLength = len(nativeSentenceArray) 
-    #    maxLength = 500000
-    #    if arrayLength > maxLength:
-    #        nativeSentenceShortArray = nativeSentenceArray[:maxLength]
-    #    else:
-    #        nativeSentenceShortArray = nativeSentenceArray
-    #    nativeFile.close()
-    #
-    #counter = 1
-    #for sentence in nativeSentenceShortArray:
-    #    sentence = removeBrackets(sentence)
-    #    print(counter)
-    #    sentence = handleTitle(sentence)
-    #    counter = counter + 1
-    #    #sentence = handleUpperLowerCase(sentence)
-    #    nativeNewSentenceArray.append(sentence)
-    #    
-    #for sentence in nativeNewSentenceArray:
-    #    nativeOutputFile.write(sentence)     
-    #nativeOutputFile.close()
-    #
-    #for index in range(5):
-    #    np.random.shuffle(nonNativeNewSentenceArray)
-    #    np.random.shuffle(nativeNewSentenceArray)
-    
-  
+    for sentence in nativeSentenceArray:
+        sentence = removeBrackets(sentence)
+        sentence = handleTitle(sentence)
+        sentence = handleUpperLowerCase(sentence, trigramDictionary, unigramDictionary)
+        nativeNewSentenceArray.append(sentence)
+    for sentence in nativeNewSentenceArray:
+            nativeOutputFile.write(sentence + "\n")     
+    nativeOutputFile.close()
+      
     trigramsDB.close()
+    unigramsDB.close()
 
 def createSentencesArray(file):
     sentenceArry = []
@@ -103,12 +73,18 @@ def createTrigramDictionary(triGramsFile):
     
     for line in triGramsFile:
          (counter, trigram1, trigram2, trigram3) = line.split()
-         key =trigram1 + ' ' + trigram2 + ' ' + trigram3           
+         key = trigram1 + ' ' + trigram2 + ' ' + trigram3           
          trigramDict[key] = int(counter)
-    return trigramDict         
+    return trigramDict  
 
-
-
+def createUnigramDictionary(uniGramsFile):
+    unigramDict = {}
+    
+    for line in uniGramsFile:
+         (counter, unigram1) = line.split()
+         key = unigram1           
+         unigramDict[key] = int(counter)
+    return unigramDict          
 
 def isLineEmpty(line):
     return len(line.strip()) == 0
@@ -136,57 +112,49 @@ def handleTitle(sentence):
     sentence = ' '.join(sentenceWordArray) 
     return sentence
 
-def handleUpperLowerCase(sentence, trigramDictionary):    
+def handleUpperLowerCase(sentence, trigramDictionary, unigramDictionary):    
     sentenceSplitWordArray = sentence.split()
     lengthSplitArray =  len(sentenceSplitWordArray) - 2
-#    print(sentence)
     counter = 0
     for index in range(lengthSplitArray):
         found = False
         middleWord = sentenceSplitWordArray[index + 1]
-        trueCase=middleWord
-        trigramLower = sentenceSplitWordArray[index] + " " + sentenceSplitWordArray[index + 1].lower() + " " + sentenceSplitWordArray[index + 2]
-        trigramUpper = sentenceSplitWordArray[index] + " " + sentenceSplitWordArray[index + 1].upper() + " " + sentenceSplitWordArray[index + 2]
-        trigramTitle = sentenceSplitWordArray[index] + " " + sentenceSplitWordArray[index + 1].title() + " " + sentenceSplitWordArray[index + 2]
-#        print (trigramLower)
-#        print (trigramUpper)
-#        print (trigramTitle)
+        trueCase = middleWord
+        unigramLower = sentenceSplitWordArray[index + 1].lower()
+        unigramUpper = sentenceSplitWordArray[index + 1].upper()
+        unigramTitle = sentenceSplitWordArray[index + 1].title()
+        trigramLower = sentenceSplitWordArray[index] + " " + unigramLower + " " + sentenceSplitWordArray[index + 2]
+        trigramUpper = sentenceSplitWordArray[index] + " " + unigramUpper + " " + sentenceSplitWordArray[index + 2]
+        trigramTitle = sentenceSplitWordArray[index] + " " + unigramTitle + " " + sentenceSplitWordArray[index + 2]
+
         if trigramLower in trigramDictionary.keys():
-            counter= trigramDictionary[trigramLower]    
-            trueCase=middleWord.lower()
+            counter = trigramDictionary[trigramLower]    
+            trueCase = middleWord.lower()
             found = True           
         if trigramUpper in trigramDictionary.keys():           
            if counter < trigramDictionary[trigramUpper]:            
               trueCase = middleWord.upper()
-              counter=trigramDictionary[trigramUpper]              
+              counter = trigramDictionary[trigramUpper]              
            found = True
         if trigramTitle in trigramDictionary.keys():  
            if counter < trigramDictionary[trigramTitle]:
-               trueCase=middleWord.title()               
-           found=True
+               trueCase = middleWord.title()               
+           found = True
            
         if found:
-#            print("TrueCase = " + trueCase + "counter = " + str(counter))
             sentenceSplitWordArray[index+1] = trueCase
-#        else: # could not find trigram - fall back to unigram        
-#     
-#            
-#            for key,value in trigramDictionary.items(): 
-#      
-#                gramsSplitArray = key.split()
-#                gramsStr = gramsSplitArray[2]
-#                currMaxValue = int(gramsSplitArray[0])
-#                print(oneWordStr)
-#                print(gramsStr)
-#                if oneWordStr.lower() == gramsStr.lower():
-#                    flag = 1
-#                    if currMaxValue > maxValue:
-#                        maxValue = currMaxValue
-#                        upperLowerCase = gramsSplitArray[2]
-#                        sentenceSplitWordArray[index+1] = upperLowerCase
-#                elif flag == 1:
-#                    break
-#            
+        else: # could not find trigram - fall back to unigram
+            if unigramLower in unigramDictionary.keys():
+                counter = unigramDictionary[unigramLower]    
+                trueCase = middleWord.lower()
+            if unigramUpper in unigramDictionary.keys():           
+                if counter < unigramDictionary[unigramUpper]:            
+                    trueCase = middleWord.upper()
+                    counter = unigramDictionary[unigramUpper]              
+            if unigramTitle in unigramDictionary.keys():  
+                if counter < unigramDictionary[unigramTitle]:
+                    trueCase = middleWord.title()               
+            sentenceSplitWordArray[index+1] = trueCase
                 
     sentence = " ".join(sentenceSplitWordArray)
     return sentence

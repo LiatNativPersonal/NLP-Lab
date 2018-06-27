@@ -4,25 +4,21 @@ Created on Sat Jun 16 22:50:45 2018
 
 @author: TAL-LAPTOP
 """
-from nltk.corpus import wordnet as wn
-from WordNetAccess import  get_number_of_syns, get_min_hypernym_path
-from TofelPOSTagging import tag_part_of_speech
+#from nltk.corpus import wordnet as wn
+#from WordNetAccess import  get_number_of_syns, get_min_hypernym_path
+#from TofelPOSTagging import tag_part_of_speech
 from TrueCase import correctCase
 import ast
 import sys
 import os
 import numpy as np
 
-#non_native_directory_path = sys.argv[1]
-non_native_directory_path = 'C:\\Users\\TAL-LAPTOP\\Desktop\\NLP Lab\\reddit.nonNative\\'
-#native_directory_path = sys.argv[2]
-native_directory_path = 'C:\\Users\\TAL-LAPTOP\\Desktop\\NLP Lab\\reddit.Native\\'
-#trigrams_file = sys.argv[3]
-trigrams_file = 'C:\\Users\\TAL-LAPTOP\\Desktop\\NLP Lab\\w3.txt'
-#nonNativeOutputFileName = sys.argv[4]
-nonNativeOutputFileName ='C:\\Users\\TAL-LAPTOP\\Desktop\\NLP Lab\\nonNativeTrueCase.txt'
-#nativeOutputFileName = sys.argv[5]
-nativeOutputFileName ='C:\\Users\\TAL-LAPTOP\\Desktop\\NLP Lab\\NativeTrueCase.txt'
+non_native_directory_path = sys.argv[1]
+native_directory_path = sys.argv[2]
+trigrams_file = sys.argv[3]
+unigrams_file = sys.argv[4]
+nonNativeOutputFileName = sys.argv[5]
+nativeOutputFileName = sys.argv[6]
 #trueCase = sys.argv[6]
 trueCase = True
 
@@ -31,7 +27,7 @@ trueCase = True
 
 # TrueCase (if needed)
 if trueCase:
-    correctCase(trigrams_file, native_directory_path, non_native_directory_path, nonNativeOutputFileName, nativeOutputFileName)
+    correctCase(trigrams_file, unigrams_file, native_directory_path, non_native_directory_path, nonNativeOutputFileName, nativeOutputFileName)
 
 # Part of Speech Tagging
 # Convet to WordNet Tagging ?
@@ -48,7 +44,7 @@ if trueCase:
 #print (wn.VERB)
 #print (wn.NOUN)
 #print (wn.ADV)
-ss= wn.synset('first.r.01')
+#ss= wn.synset('first.r.01')
 #print(ss)
 #print (min([len(path) for path in ss.hypernym_paths()]))
 new_line=[]
