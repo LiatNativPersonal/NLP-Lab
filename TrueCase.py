@@ -3,10 +3,7 @@ import os
 import numpy as np
 
 
-def correctCase(trigrams_file, unigrams_file, native_directory_path, non_native_directory_path, nonNativeOutputFileName, nativeOutputFileName):
-   
-   
-    
+def correctCase(trigrams_file, unigrams_file, native_directory_path, non_native_directory_path, nonNativeOutputFileName, nativeOutputFileName):     
     if not os.path.exists(nonNativeOutputFileName) or not os.path.exists(nativeOutputFileName):
         print("Need to perform TrueCasing") 
         trigramsDB = open(trigrams_file,"r")
