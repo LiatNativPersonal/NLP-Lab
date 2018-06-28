@@ -5,20 +5,22 @@ Spyder Editor
 This is a temporary script file.
 """
 from nltk.corpus import wordnet as wn
+import ast
 
-def get_wordnet_pos(tag):
-   if tag.startswith('JJ'):
-       return wn.ADJ
-   elif tag.startswith('VB'):
-       return wn.VERB
-   elif tag.startswith('NN'):
-       return wn.NOUN
-   elif tag.startswith('RB'):
-       return wn.ADV
-   else:
-        return ''
+def queryWordNet(inputFile, outputFile):
+    with open(outputFile, 'a') as ouput:
+        with open(inputFile, 'r') as input:
+                data = tuple(ast.literal_eval(line) for line in input)
+                for tupple in data:
+        #    #        print(tupple)
+                    if len(tupple) < 3 :
+                        continue              
+                    print(get_number_of_syns(tupple))
+                    print(get_min_hypernym_path(tupple))
+                    ouput.write(str(tupple[0]) + ',' + str(tupple[1]) + ',' + str(tupple[2]) + ',' + str(get_number_of_syns(tupple)) + ',' + str(get_min_hypernym_path(tupple)))
+                    ouput.write('\n')
+        ouput.close()
     
-
     
 def get_number_of_syns(tupple):     
     try:
