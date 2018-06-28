@@ -5,9 +5,10 @@ Created on Sat Jun 16 22:50:45 2018
 @author: TAL-LAPTOP
 """
 #from nltk.corpus import wordnet as wn
-#from WordNetAccess import  get_number_of_syns, get_min_hypernym_path
+from WordNetAccess import  queryWordNet
 #from TofelPOSTagging import tag_part_of_speech
 from TrueCase import correctCase
+from POSTagging import tagPartOfSpeech
 import ast
 import sys
 import os
@@ -19,6 +20,10 @@ trigrams_file = sys.argv[3]
 unigrams_file = sys.argv[4]
 nonNativeOutputFileName = sys.argv[5]
 nativeOutputFileName = sys.argv[6]
+posNativOutputFileName = sys.argv[7]
+posNonNativOutputFileName = sys.argv[8]
+wordNetNativeOutputFileName = sys.argv[9]
+wordNetNonNativeOutputFileName = sys.argv[10]
 #trueCase = sys.argv[6]
 trueCase = True
 
@@ -30,10 +35,14 @@ def main():
         correctCase(trigrams_file, unigrams_file, native_directory_path, non_native_directory_path, nonNativeOutputFileName, nativeOutputFileName)
     
     # Part of Speech Tagging
-    # Convet to WordNet Tagging ?
+    # Convet to WordNet Tagging
     # Word Sense disambiguation
+    tagPartOfSpeech(nativeOutputFileName, posNativOutputFileName)
+    #tagPartOfSpeech(nonNativeOutputFileName, posNonNativOutputFileName)
+
     # Querty WordNet
     # Need to consider frequent word issue (noise - tend to have many senses):
+    queryWordNet(posNativOutputFileName,wordNetNativeOutputFileName)
     # Staistial Analysis
     
     
