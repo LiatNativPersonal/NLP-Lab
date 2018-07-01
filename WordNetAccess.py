@@ -6,8 +6,12 @@ This is a temporary script file.
 """
 from nltk.corpus import wordnet as wn
 import ast
+import os
 
 def queryWordNet(inputFile, outputFile):
+    if os.path.exists(outputFile):
+        print("WordNet query tagging phase skipped")
+        return
     with open(outputFile, 'a') as ouput:
         with open(inputFile, 'r') as input:
                 data = tuple(ast.literal_eval(line) for line in input)
@@ -15,10 +19,14 @@ def queryWordNet(inputFile, outputFile):
         #    #        print(tupple)
                     if len(tupple) < 3 :
                         continue              
-                    print(get_number_of_syns(tupple))
-                    print(get_min_hypernym_path(tupple))
-                    ouput.write(str(tupple[0]) + ',' + str(tupple[1]) + ',' + str(tupple[2]) + ',' + str(get_number_of_syns(tupple)) + ',' + str(get_min_hypernym_path(tupple)))
-                    ouput.write('\n')
+#                    print(get_number_of_syns(tupple))
+#                    print(get_min_hypernym_path(tupple))
+                    try:
+                        #ouput.write(str(tupple[0]) + ',' + str(tupple[1]) + ',' + str(tupple[2]) + ',' + str(get_number_of_syns(tupple)) + ',' + str(get_min_hypernym_path(tupple)))
+                        ouput.write(str(tupple[0]) + ' ' + str(get_number_of_syns(tupple)) + ' ' + str(get_min_hypernym_path(tupple)))
+                        ouput.write('\n')
+                    except:
+                        continue
         ouput.close()
     
     
