@@ -29,7 +29,7 @@ counter = 1
 for sentence in sentenceArray:
     wordsArray = sentence.split( )
     for word in wordsArray:
-        key = word.lower()
+        key = word
         if key in wordFreqDictionary.keys():
             wordFreqDictionary[key] = wordFreqDictionary[key] + 1
         else:
