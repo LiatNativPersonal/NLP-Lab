@@ -9,6 +9,7 @@ from WordNetAccess import  queryWordNet
 #from TofelPOSTagging import tag_part_of_speech
 from TrueCase import correctCase
 from POSTagging import tagPartOfSpeech
+from frequencyNormalization import normalizeByFrequecny
 import sys
 
 
@@ -22,7 +23,7 @@ posNativeOutputFileName = sys.argv[7]
 posNonNativeOutputFileName = sys.argv[8]
 wordNetNativeOutputFileName = sys.argv[9]
 wordNetNonNativeOutputFileName = sys.argv[10]
-
+normalizeByFrequency = True
 
 def main():
     #perforn true-casing
@@ -36,6 +37,9 @@ def main():
 
     # Querty WordNet
     # Need to consider frequent word issue (noise - tend to have many senses):
+    if normalizeByFrequency:
+        normalizeByFrequecny()
+        
     queryWordNet(posNonNativeOutputFileName,wordNetNonNativeOutputFileName)
     # Staistial Analysis on results
     # normalization phase
