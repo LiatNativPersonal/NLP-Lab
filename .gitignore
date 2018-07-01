@@ -110,3 +110,8 @@ w21.txt
 nativeOut.txt
 nonNativeOut.txt
 posNativeOut.txt
+wnNonNative.txt
+wnNative.txt
+reddit_word_freq_orig_case.txt
+reddit_word_freq.txt
+posNonNativeOut.txt
