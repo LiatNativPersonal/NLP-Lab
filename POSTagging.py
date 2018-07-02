@@ -14,7 +14,7 @@ def tagPartOfSpeech(sourceFile, destFile):
         print("POS tagging phase skipped")
         return
     with open(destFile, 'a+') as tagged: 
-        with open(sourceFile, 'r', encoding='iso-8859-1') as orig: 
+        with open(sourceFile, 'r', encoding="utf-8") as orig: 
             for line in orig:
                    if line == "\n":
                        continue
