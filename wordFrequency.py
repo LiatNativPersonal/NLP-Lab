@@ -29,6 +29,8 @@ counter = 1
 for sentence in sentenceArray:
     wordsArray = sentence.split( )
     for word in wordsArray:
+        if not word.isalpha():
+            continue
         key = word
         if key in wordFreqDictionary.keys():
             wordFreqDictionary[key] = wordFreqDictionary[key] + 1
