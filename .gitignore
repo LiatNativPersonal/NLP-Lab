@@ -115,3 +115,7 @@ wnNative.txt
 reddit_word_freq_orig_case.txt
 reddit_word_freq.txt
 posNonNativeOut.txt
+wnNormalizedByFreqNonNative.txt
+res.txt
+res
+tcNonNativeOut.txt
