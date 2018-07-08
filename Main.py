@@ -24,6 +24,8 @@ posNonNativeOutputFileName = sys.argv[8]
 posNativeOutputFileName = sys.argv[9]
 wordNetNonNativeOutputFileName = sys.argv[10]
 wordNetNativeOutputFileName = sys.argv[11]
+freqNormWnNonNativeOutput = sys.argv[12]
+freqNormWnNativeOutput = sys.argv[13]
 normalizeByFrequency = True
 
 def main():
@@ -33,16 +35,17 @@ def main():
     # Part of Speech Tagging
     # Convet to WordNet Tagging
     # Word Sense disambiguation
-    tagPartOfSpeech(nativeOutputFileName, posNativeOutputFileName)
+    #tagPartOfSpeech(nativeOutputFileName, posNativeOutputFileName)
     #tagPartOfSpeech(nonNativeOutputFileName, posNonNativeOutputFileName)
 
     # Querty WordNet
     # Need to consider frequent word issue (noise - tend to have many senses):
     #queryWordNet(posNonNativeOutputFileName,wordNetNonNativeOutputFileName)
-    queryWordNet(posNativeOutputFileName,wordNetNativeOutputFileName)
+    #queryWordNet(posNativeOutputFileName,wordNetNativeOutputFileName)
     
-#    if normalizeByFrequency:
-#        normalizeByFrequecny(wordNetNonNativeOutputFileName, normalizedWordnetResultsFile)
+    if normalizeByFrequency:
+        normalizeByFrequecny(wordNetNonNativeOutputFileName, freqNormWnNonNativeOutput)
+        normalizeByFrequecny(wordNetNativeOutputFileName, freqNormWnNativeOutput)
         
     
     # Staistial Analysis on results

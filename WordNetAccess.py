@@ -7,11 +7,13 @@ This is a temporary script file.
 from nltk.corpus import wordnet as wn
 import ast
 import os
+import nltk
 
 def queryWordNet(inputFile, outputFile):
     if os.path.exists(outputFile):
         print("WordNet query tagging phase skipped")
         return
+    print("Start WordNet query, writing results to " + outputFile)
     with open(outputFile, 'a') as ouput:
         with open(inputFile, 'r') as input:
                 data = tuple(ast.literal_eval(line) for line in input)
@@ -37,7 +39,7 @@ def get_number_of_syns(tupple):
         return ''
 
 def get_min_hypernym_path(tupple): 
-    expr = tupple[0] + '.' + tupple[1] + '.' + tupple[2]
+    expr = nltk.stem.WordNetLemmatizer().lemmatize(tupple[0],tupple[1]) + '.' + tupple[1] + '.' + tupple[2]
     try:         
         ss = wn.synset(expr)
     except:
