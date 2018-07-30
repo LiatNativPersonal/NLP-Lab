@@ -1,5 +1,6 @@
 import os
-import numpy as np
+#import numpy as np
+import random
 
 
 def correctCase(trigrams_file, bigrams_file, unigrams_file, native_directory_path, non_native_directory_path, nonNativeOutputFileName, nativeOutputFileName):     
@@ -13,8 +14,9 @@ def correctCase(trigrams_file, bigrams_file, unigrams_file, native_directory_pat
         unigramDictionary = createUnigramDictionary(unigramsDB)
         nonNativeSentenceArray = []
         nonNativeNewSentenceArray = []
-        nativeSentenceArray = []
+        nativeSentenceArray = []        
         nativeNewSentenceArray = []
+
         # NON NATIVE              
         if not os.path.exists(nonNativeOutputFileName):
             print("True-casing non-nativ data")
@@ -25,9 +27,9 @@ def correctCase(trigrams_file, bigrams_file, unigrams_file, native_directory_pat
                 nonNativeFile = open(non_native_directory_path + "\\" + file,"r", encoding = "utf8",  errors="ignore")
                 print("Running file " + str(file))
                 maxLength = 500000
+
                 nonNativeSentenceArray += (createSentencesArray(nonNativeFile, maxLength))
-                nonNativeFile.close()
-        
+                nonNativeFile.close()    
             for sentence in nonNativeSentenceArray:
                 sentence = removeBrackets(sentence)
                 sentence = handleTitle(sentence)
@@ -40,17 +42,18 @@ def correctCase(trigrams_file, bigrams_file, unigrams_file, native_directory_pat
             print("Truecase phase for non-native skipped - data exist")
          # NATIVE   
         if not os.path.exists(nativeOutputFileName):
+            nonNativelength = len(nonNativeSentenceArray)/6
+            del nonNativeNewSentenceArray[:]
+            del nonNativeSentenceArray[:]
+            #nonNativelength = 2881049
             print("True-casing nativ data")
             nativeOutputFile = open(nativeOutputFileName,"w", encoding="utf-8")       
             nativeFileList = os.listdir(native_directory_path)
-            #nonNativelength = len(nonNativeSentenceArray)/6
-            nonNativelength = 2880000
             for file in nativeFileList:       
                 nativeFile = open(native_directory_path + "\\" + file, "r", encoding = "utf8",  errors = "ignore")
                 print("Running file " + str(file))
                 nativeSentenceArray += (createSentencesArray(nativeFile, nonNativelength))
-                nativeFile.close()
-                
+                nativeFile.close() 
             for sentence in nativeSentenceArray:
                 sentence = removeBrackets(sentence)
                 sentence = handleTitle(sentence)
@@ -61,6 +64,9 @@ def correctCase(trigrams_file, bigrams_file, unigrams_file, native_directory_pat
             nativeOutputFile.close()
         else:
             print("Truecase phase for native skipped - data exist")
+            
+        del nativeNewSentenceArray[:]
+        del nativeSentenceArray[:]
           
         trigramsDB.close()
         bigramsDB.close()
@@ -71,18 +77,20 @@ def correctCase(trigrams_file, bigrams_file, unigrams_file, native_directory_pat
 
 def createSentencesArray(file, maxLength):
     sentenceArray = []
+    newSentenceArray = []
     maxLength = int(maxLength)
     for line in file:
         if not isLineEmpty(line):
             sentenceArray.append(line)
             
-    np.random.shuffle(sentenceArray)
-    
     arrayLength = len(sentenceArray)
 
     if arrayLength > maxLength:
-        sentenceArray = sentenceArray[:maxLength]
-    return sentenceArray
+        newSentenceArray = random.sample(sentenceArray,maxLength)
+    else:
+       newSentenceArray = sentenceArray
+        
+    return newSentenceArray
 
 def createTrigramDictionary(triGramsFile):
     trigramDict = {}
@@ -126,6 +134,8 @@ def handleTitle(sentence):
     sentenceWordArray = sentence.split()
     index = 0
     flag = 1
+    if len(sentence) == 0:
+        return sentence
     while flag == 1:
         if sentenceWordArray[index].isalpha():
             sentenceWordArray[index] = sentenceWordArray[index].title()
@@ -137,12 +147,12 @@ def handleTitle(sentence):
     sentence = ' '.join(sentenceWordArray) 
     return sentence
 
-def handleUpperLowerCase(sentence, trigramDictionary, bigramDictionary, unigramDictionary):    
+def handleUpperLowerCase(sentence, trigramDictionary, bigramDictionary, unigramDictionary): 
     sentenceSplitWordArray = sentence.split()
     lengthSplitArray =  len(sentenceSplitWordArray) - 2
-    counter = 0
     for index in range(lengthSplitArray):
         found = False
+        counter = 0
         middleWord = sentenceSplitWordArray[index + 1]
         trueCase = middleWord
         unigramLower = sentenceSplitWordArray[index + 1].lower()
@@ -153,8 +163,7 @@ def handleUpperLowerCase(sentence, trigramDictionary, bigramDictionary, unigramD
         bigramTitle = sentenceSplitWordArray[index] + " " + unigramTitle
         trigramLower = sentenceSplitWordArray[index] + " " + unigramLower + " " + sentenceSplitWordArray[index + 2]
         trigramUpper = sentenceSplitWordArray[index] + " " + unigramUpper + " " + sentenceSplitWordArray[index + 2]
-        trigramTitle = sentenceSplitWordArray[index] + " " + unigramTitle + " " + sentenceSplitWordArray[index + 2]
-
+        trigramTitle = sentenceSplitWordArray[index] + " " + unigramTitle + " " + sentenceSplitWordArray[index + 2]   
         if trigramLower in trigramDictionary.keys():
             counter = trigramDictionary[trigramLower]    
             trueCase = middleWord.lower()

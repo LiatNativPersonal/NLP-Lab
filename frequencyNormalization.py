@@ -4,9 +4,48 @@ Created on Sun Jul  1 10:10:35 2018
 
 @author: Lilach Naim & Liat Nativ
 """
-from math import log
+from math import log, floor
 import os
-frequencyDB = "c:/Users/TAL-LAPTOP/Desktop/NLP Lab/code/reddit_word_freq_orig_case.txt"
+frequencyDB = "c:/Users/TAL-LAPTOP/Desktop/NLP Lab/frequencyCalculation/outputs/polyFreqRank.txt"
+
+def splitToFrequencyBins(wordnetResulsFile, binsNumber):
+    binsDict = {}
+    rankDict={}
+    for i in range( binsNumber+1):
+        binsDict[i] = []    
+    with open(frequencyDB, 'r', encoding = "utf8",  errors="ignore") as freqFile:  
+        print('frequency is stored in file ' + frequencyDB)        
+        for line in freqFile:            
+            (strrank, taggedToken) = line.split()
+            rank = int(strrank)
+            rankDict[taggedToken] = rank
+    freqFile.close()    
+            
+    with open(wordnetResulsFile, 'r') as inputFile:
+        print('Processing wordnet query results stored in file ' + wordnetResulsFile)
+        for line in inputFile:
+            (word, pos, value) = line.split()                                
+            for i in range(1, binsNumber):
+                key = word +','+ pos
+                if key in rankDict.keys():
+                    index = floor(log(rankDict[key],10))
+                    if index >= binsNumber:
+                        binsDict[binsNumber].append(line)
+                    else:
+                        binsDict[index].append(line)
+                        
+    inputFile.close()
+        
+    for bin,lines in binsDict.items():
+        filename = 'bin' + str(bin) + wordnetResulsFile
+        with open(filename, 'w', encoding = "utf8") as output:
+            for line in lines:            
+                output.write(line)
+        output.close()
+                
+           
+                
+                    
 
 def normalizeByFrequecny(wordnetResulsFile, normalizedWordnetResultsFile):
     if os.path.exists(normalizedWordnetResultsFile):
