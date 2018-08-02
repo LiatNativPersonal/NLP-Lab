@@ -1,13 +1,17 @@
 import sys
 import numpy as np
 from scipy import stats
-import math
+import random
 
 native_first_file = sys.argv[1]
 nonNative_file = sys.argv[2]
+statistics_ttest_file = sys.argv[3]
+statistics_wilcoxon_file = sys.argv[4]
 
 nativeFile = open(native_first_file,"r")
 nonNativeFile = open(nonNative_file,"r")
+statisticsTtestOutputFile = open(statistics_ttest_file,"w")
+statisticsWilcoxonOutputFile = open(statistics_wilcoxon_file,"w")
 
 nativeLineArray = []
 nonNativeLineArray = []
@@ -22,40 +26,27 @@ minHyperPathNonNativeArrayTemp = []
 
 blockSize = 2000
 numOfStatististicsTests = 50
-
-
+numOfBlocks = 500
 
 # NATIVE
 for line in nativeFile:
     nativeLineArray.append(line)
     
 for line in nativeLineArray:
-    try:
-        (word,cynsCount,minHyperPath) = line.split( )
-        cynsNativeArray.append(int(cynsCount))
-        minHyperPathNativeArray.append(int(minHyperPath))
-    except:
-        continue
+    (word,cynsCount,minHyperPath) = line.split( )
+    cynsNativeArray.append(float(cynsCount))
+    minHyperPathNativeArray.append(float(minHyperPath))
+    
     
 # NON NATIVE    
 for line in nonNativeFile:
     nonNativeLineArray.append(line)
     
 for line in nonNativeLineArray:
-    try:
-        (word, cynsCount, minHyperPath) = line.split( )
-        cynsNonNativeArray.append(int(cynsCount))
-        minHyperPathNonNativeArray.append(int(minHyperPath))
-    except:
-        continue
-    
-maxLength = min(len(nativeLineArray), len(nonNativeLineArray))
-    
-np.random.shuffle(cynsNativeArray)
-np.random.shuffle(minHyperPath)
-np.random.shuffle(cynsNonNativeArray)
-np.random.shuffle(minHyperPathNonNativeArray)
-      
+    (word, cynsCount, minHyperPath) = line.split( )
+    cynsNonNativeArray.append(float(cynsCount))
+    minHyperPathNonNativeArray.append(float(minHyperPath))
+          
 # STATISTICS
 i = 0
 cynsNativeAverageArray = []
@@ -63,36 +54,54 @@ cynsNonNativeAverageArray = []
 minHyperpathNativeAverageArray = []
 minHyperpathNonNativeAverageArray = []
 
-numOfBlocks = math.floor(maxLength/blockSize)
 for j in range(numOfStatististicsTests):
+    size = blockSize * numOfBlocks
+    cynsNativeRandArray = random.sample(cynsNativeArray, size)
+    minHyperPathNativeRandArray = random.sample(minHyperPathNativeArray, size)
+    cynsNonNativeRandArray = random.sample(cynsNonNativeArray, size)
+    minHyperPathNonNativeRandArray = random.sample(minHyperPathNonNativeArray, size)
     for i in range(numOfBlocks):    
         
-        cynsNativeArrayTemp = cynsNativeArray[i * blockSize : (i + 1) * blockSize]
+        cynsNativeArrayTemp = cynsNativeRandArray[i * blockSize : (i + 1) * blockSize]
+        print(cynsNativeArrayTemp)
         cynsNativeAverage = np.mean(cynsNativeArrayTemp)
         cynsNativeAverageArray.append(cynsNativeAverage)
-        minHyperPathNativeArrayTemp = minHyperPathNativeArray[i * blockSize : (i + 1) * blockSize]
+        minHyperPathNativeArrayTemp = minHyperPathNativeRandArray[i * blockSize : (i + 1) * blockSize]
         minHyperpathNativeAverage = np.mean(minHyperPathNativeArrayTemp)
         minHyperpathNativeAverageArray.append(minHyperpathNativeAverage)
-        cynsNonNativeArrayTemp = cynsNonNativeArray[i * blockSize : (i + 1) * blockSize]
+        cynsNonNativeArrayTemp = cynsNonNativeRandArray[i * blockSize : (i + 1) * blockSize]
         cynsNonNativeAverage = np.mean(cynsNonNativeArrayTemp)
         cynsNonNativeAverageArray.append(cynsNonNativeAverage)
-        minHyperPathNonNativeArrayTemp = minHyperPathNonNativeArray[i * blockSize : (i + 1) * blockSize]
+        minHyperPathNonNativeArrayTemp = minHyperPathNonNativeRandArray[i * blockSize : (i + 1) * blockSize]
         minHyperpathNonNativeAverage = np.mean(minHyperPathNonNativeArrayTemp)
         minHyperpathNonNativeAverageArray.append(minHyperpathNonNativeAverage)
-        
-    [cynsStatistics, cynsPvalue] = stats.ttest_ind(cynsNativeAverageArray, cynsNonNativeAverageArray)
-    [minStatistics, minPvalue] = stats.ttest_ind(minHyperpathNativeAverageArray, minHyperpathNonNativeAverageArray)
+        del cynsNativeArrayTemp[:]
+        del minHyperPathNativeArrayTemp[:]
+        del cynsNonNativeArrayTemp[:]
+        del minHyperPathNonNativeArrayTemp[:]
+    i = 0    
+    [ttestCynsStatistics, ttestCynsPvalue] = stats.ttest_ind(cynsNonNativeAverageArray, cynsNativeAverageArray)
+    [ttestMinStatistics, ttestMinPvalue] = stats.ttest_ind(minHyperpathNonNativeAverageArray, minHyperpathNativeAverageArray)
+
+    print("Native")
+    statisticsTtestOutputFile.write(str(ttestCynsStatistics) + " " + str(ttestCynsPvalue) + " " + str(ttestMinStatistics) + " " + str(ttestMinPvalue) + "\n")
     
-    print("T-Test")
-    print(cynsStatistics, cynsPvalue)
-    print(minStatistics, minPvalue)
+    [wilcoxCynsStatistics, wilcoxCynsPvalue] = stats.ranksums(cynsNativeAverageArray, cynsNonNativeAverageArray)
+    [wilcoxMinStatistics, wilcoxMinPvalue] = stats.ranksums(minHyperpathNativeAverageArray, minHyperpathNonNativeAverageArray)
     
-    [cynsStatistics, cynsPvalue] = stats.wilcoxon(cynsNativeAverageArray, cynsNonNativeAverageArray)
-    [minStatistics, minPvalue] = stats.wilcoxon(minHyperpathNativeAverageArray, minHyperpathNonNativeAverageArray)
+    statisticsWilcoxonOutputFile.write(str(wilcoxCynsStatistics) + " " + str(wilcoxCynsPvalue) + " " + str(wilcoxMinStatistics) + " " + str(wilcoxMinPvalue) + "\n")
     
-    print("Wilcox")
-    print(cynsStatistics, cynsPvalue)
-    print(minStatistics, minPvalue)
+    del cynsNativeAverageArray[:]
+    del cynsNonNativeAverageArray[:]
+    del minHyperpathNativeAverageArray[:]
+    del minHyperpathNonNativeAverageArray[:]
+    
+    
+statisticsTtestOutputFile.close()
+statisticsWilcoxonOutputFile.close()
+nativeFile.close()
+nonNativeFile.close()
+    
     
     
     
