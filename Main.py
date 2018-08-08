@@ -32,18 +32,18 @@ normalizeByFrequency = True
 
 def main():
     #perforn true-casing
-#    correctCase(trigrams_file, bigrams_file, unigrams_file, native_directory_path, non_native_directory_path, nonNativeOutputFileName, nativeOutputFileName)    
+    correctCase(trigrams_file, bigrams_file, unigrams_file, native_directory_path, non_native_directory_path, nonNativeOutputFileName, nativeOutputFileName)    
     
     # Part of Speech Tagging
     # Convet to WordNet Tagging
     # Word Sense disambiguation
-    #tagPartOfSpeech(nativeOutputFileName, posNativeOutputFileName)
+#    tagPartOfSpeech(nativeOutputFileName, posNativeOutputFileName)
     #tagPartOfSpeech(nonNativeOutputFileName, posNonNativeOutputFileName)
 
     # Querty WordNet
     # Need to consider frequent word issue (noise - tend to have many senses):
     #queryWordNet(posNonNativeOutputFileName,wordNetNonNativePolyOutputFileName, wordNetNonNativeHyperOutputFileName)
-    #queryWordNet(posNativeOutputFileName,wordNetNativePolyOutputFileName, wordNetNativeHyperOutputFileName)
+#    queryWordNet(posNativeOutputFileName,wordNetNativePolyOutputFileName, wordNetNativeHyperOutputFileName)
 
     
 #    if normalizeByFrequency:
@@ -60,8 +60,10 @@ def main():
     #Statistical significance Analysis
     
     
-    splitToFrequencyBins(wordNetNonNativePolyOutputFileName, 3)
-    
+#    splitToFrequencyBins(wordNetNativePolyOutputFileName,"c:/Users/TAL-LAPTOP/Desktop/NLP Lab/frequencyCalculation/outputs/polyFreqRank.txt", 5)
+    #splitToFrequencyBins(wordNetNonNativePolyOutputFileName,"c:/Users/TAL-LAPTOP/Desktop/NLP Lab/frequencyCalculation/outputs/polyFreqRank.txt", 5)
+    splitToFrequencyBins(wordNetNonNativeHyperOutputFileName,"c:/Users/TAL-LAPTOP/Desktop/NLP Lab/frequencyCalculation/outputs/hyperFreqRank.txt", 5)
+    #SsplitToFrequencyBins(wordNetNativeHyperOutputFileName,"c:/Users/TAL-LAPTOP/Desktop/NLP Lab/frequencyCalculation/outputs/hyperFreqRank.txt", 5)
 
 if __name__ == "__main__":
     main()

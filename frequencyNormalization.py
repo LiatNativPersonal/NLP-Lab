@@ -6,9 +6,10 @@ Created on Sun Jul  1 10:10:35 2018
 """
 from math import log, floor
 import os
-frequencyDB = "c:/Users/TAL-LAPTOP/Desktop/NLP Lab/frequencyCalculation/outputs/polyFreqRank.txt"
+#polyFrequencyDB = "c:/Users/TAL-LAPTOP/Desktop/NLP Lab/frequencyCalculation/outputs/polyFreqRank.txt"
+#hyperFrequencyDB = "c:/Users/TAL-LAPTOP/Desktop/NLP Lab/frequencyCalculation/outputs/HyperFreqRank.txt"
 
-def splitToFrequencyBins(wordnetResulsFile, binsNumber):
+def splitToFrequencyBins(wordnetResulsFile, frequencyDB, binsNumber):
     binsDict = {}
     rankDict={}
     for i in range( binsNumber+1):
@@ -127,7 +128,7 @@ def normalizeByRank(wordnetResulsFile, normalizedWordnetResultsFile):
 def createSortedFrequencyDictionary():
     frequencyDict = {}
 #    ctr = 0
-    with open(frequencyDB, 'r', encoding = "utf8",  errors="ignore") as freqFile:          
+    with open(polyFrequencyDB, 'r', encoding = "utf8",  errors="ignore") as freqFile:          
         for line in freqFile:            
             try:
                 (counter, word) = line.split()

@@ -10,32 +10,29 @@ statistics_wilcoxon_file = sys.argv[4]
 
 nativeFile = open(native_first_file,"r")
 nonNativeFile = open(nonNative_file,"r")
-statisticsTtestOutputFile = open(statistics_ttest_file,"w")
-statisticsWilcoxonOutputFile = open(statistics_wilcoxon_file,"w")
+statisticsTtestOutputFile = open(statistics_ttest_file,"w+")
+statisticsWilcoxonOutputFile = open(statistics_wilcoxon_file,"w+")
 
 nativeLineArray = []
 nonNativeLineArray = []
-cynsNativeArray = []
-cynsNonNativeArray = []
-minHyperPathNativeArray = []
-minHyperPathNonNativeArray = []
-cynsNativeArrayTemp = []
-cynsNonNativeArrayTemp = []
-minHyperPathNativeArrayTemp = []
-minHyperPathNonNativeArrayTemp = []
+lexicalFeatureNativeArray = []
+lexicalFeatureNonNativeArray = []
+lexicalFeatureNativeArrayTemp = []
+lexicalFeatureNonNativeArrayTemp = []
 
-blockSize = 2000
+
+blockSize = 1500
 numOfStatististicsTests = 50
-numOfBlocks = 500
+numOfBlocks = 300
 
 # NATIVE
 for line in nativeFile:
     nativeLineArray.append(line)
     
 for line in nativeLineArray:
-    (word,cynsCount,minHyperPath) = line.split( )
-    cynsNativeArray.append(float(cynsCount))
-    minHyperPathNativeArray.append(float(minHyperPath))
+    (word, pos, lexicalFeature) = line.split( )
+    lexicalFeatureNativeArray.append(float(lexicalFeature))
+    
     
     
 # NON NATIVE    
@@ -43,59 +40,54 @@ for line in nonNativeFile:
     nonNativeLineArray.append(line)
     
 for line in nonNativeLineArray:
-    (word, cynsCount, minHyperPath) = line.split( )
-    cynsNonNativeArray.append(float(cynsCount))
-    minHyperPathNonNativeArray.append(float(minHyperPath))
+    (word, pos, lexicalFeature) = line.split( )
+    lexicalFeatureNonNativeArray.append(float(lexicalFeature))
+
           
 # STATISTICS
 i = 0
-cynsNativeAverageArray = []
-cynsNonNativeAverageArray = []
-minHyperpathNativeAverageArray = []
-minHyperpathNonNativeAverageArray = []
+lexicalFeatureNativeAverageArray = []
+lexicalFeatureNonNativeAverageArray = []
 
 for j in range(numOfStatististicsTests):
     size = blockSize * numOfBlocks
-    cynsNativeRandArray = random.sample(cynsNativeArray, size)
-    minHyperPathNativeRandArray = random.sample(minHyperPathNativeArray, size)
-    cynsNonNativeRandArray = random.sample(cynsNonNativeArray, size)
-    minHyperPathNonNativeRandArray = random.sample(minHyperPathNonNativeArray, size)
+#    with  open('temp.txt', 'w') as tempOutput:
+    lexicalFeatureNativeRandArray = random.sample(lexicalFeatureNativeArray, size)    
+#        tempOutput.write("+++++++ Native ++++++++++\n")
+#        tempOutput.write(str(lexicalFeatureNativeRandArray ))
+#        tempOutput.write('\n\n')
+    lexicalFeatureNonNativeRandArray = random.sample(lexicalFeatureNonNativeArray, size) 
+#        tempOutput.write("+++++++ Non-Native ++++++++++\n")
+#        tempOutput.write(str(lexicalFeatureNonNativeRandArray))
+#    tempOutput.close()
     for i in range(numOfBlocks):    
         
-        cynsNativeArrayTemp = cynsNativeRandArray[i * blockSize : (i + 1) * blockSize]
-        print(cynsNativeArrayTemp)
-        cynsNativeAverage = np.mean(cynsNativeArrayTemp)
-        cynsNativeAverageArray.append(cynsNativeAverage)
-        minHyperPathNativeArrayTemp = minHyperPathNativeRandArray[i * blockSize : (i + 1) * blockSize]
-        minHyperpathNativeAverage = np.mean(minHyperPathNativeArrayTemp)
-        minHyperpathNativeAverageArray.append(minHyperpathNativeAverage)
-        cynsNonNativeArrayTemp = cynsNonNativeRandArray[i * blockSize : (i + 1) * blockSize]
-        cynsNonNativeAverage = np.mean(cynsNonNativeArrayTemp)
-        cynsNonNativeAverageArray.append(cynsNonNativeAverage)
-        minHyperPathNonNativeArrayTemp = minHyperPathNonNativeRandArray[i * blockSize : (i + 1) * blockSize]
-        minHyperpathNonNativeAverage = np.mean(minHyperPathNonNativeArrayTemp)
-        minHyperpathNonNativeAverageArray.append(minHyperpathNonNativeAverage)
-        del cynsNativeArrayTemp[:]
-        del minHyperPathNativeArrayTemp[:]
-        del cynsNonNativeArrayTemp[:]
-        del minHyperPathNonNativeArrayTemp[:]
+        lexicalFeatureNativeArrayTemp = lexicalFeatureNativeRandArray[i * blockSize : (i + 1) * blockSize]
+#        print(cynsNativeArrayTemp)
+        lexicalFeatureNativeAverage = np.mean(lexicalFeatureNativeArrayTemp)
+        lexicalFeatureNativeAverageArray.append(lexicalFeatureNativeAverage)
+        
+        lexicalFeatureNonNativeArrayTemp = lexicalFeatureNonNativeRandArray[i * blockSize : (i + 1) * blockSize]
+        lexicalFeatureNonNativeAverage = np.mean(lexicalFeatureNonNativeArrayTemp)
+        lexicalFeatureNonNativeAverageArray.append(lexicalFeatureNonNativeAverage)
+        
+        del lexicalFeatureNativeArrayTemp[:]
+        del lexicalFeatureNonNativeArrayTemp[:]
+        
     i = 0    
-    [ttestCynsStatistics, ttestCynsPvalue] = stats.ttest_ind(cynsNonNativeAverageArray, cynsNativeAverageArray)
-    [ttestMinStatistics, ttestMinPvalue] = stats.ttest_ind(minHyperpathNonNativeAverageArray, minHyperpathNativeAverageArray)
+    [ttestLexicalFeatureStatistics, ttestLexicalFeaturePvalue] = stats.ttest_ind(lexicalFeatureNativeAverageArray, lexicalFeatureNonNativeAverageArray)
+   
 
-    print("Native")
-    statisticsTtestOutputFile.write(str(ttestCynsStatistics) + " " + str(ttestCynsPvalue) + " " + str(ttestMinStatistics) + " " + str(ttestMinPvalue) + "\n")
+#    print("Native")
+    statisticsTtestOutputFile.write(str(round(ttestLexicalFeatureStatistics,6)) + ", " + str(round(ttestLexicalFeaturePvalue,6)) +  "\n")
     
-    [wilcoxCynsStatistics, wilcoxCynsPvalue] = stats.ranksums(cynsNativeAverageArray, cynsNonNativeAverageArray)
-    [wilcoxMinStatistics, wilcoxMinPvalue] = stats.ranksums(minHyperpathNativeAverageArray, minHyperpathNonNativeAverageArray)
+    [wilcoxLexicalFeatureStatistics, wilcoxLexicalFeaturePvalue] = stats.ranksums(lexicalFeatureNativeAverageArray, lexicalFeatureNonNativeAverageArray)
+       
+    statisticsWilcoxonOutputFile.write(str(round(wilcoxLexicalFeatureStatistics,6)) + ", " + str(round(wilcoxLexicalFeaturePvalue,6)) +  "\n")
     
-    statisticsWilcoxonOutputFile.write(str(wilcoxCynsStatistics) + " " + str(wilcoxCynsPvalue) + " " + str(wilcoxMinStatistics) + " " + str(wilcoxMinPvalue) + "\n")
-    
-    del cynsNativeAverageArray[:]
-    del cynsNonNativeAverageArray[:]
-    del minHyperpathNativeAverageArray[:]
-    del minHyperpathNonNativeAverageArray[:]
-    
+    del lexicalFeatureNativeAverageArray[:]
+    del lexicalFeatureNonNativeAverageArray[:]
+       
     
 statisticsTtestOutputFile.close()
 statisticsWilcoxonOutputFile.close()
